@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0d0d14" />
+  <title>NightExec</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/editor.css" />
+  <link rel="stylesheet" href="css/scripts.css" />
+  <link rel="stylesheet" href="css/console.css" />
+  <link rel="stylesheet" href="css/settings.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       SPLASH
+  ═══════════════════════════════════════ -->
+  <div id="splash">
+    <div class="splash-bg"></div>
+    <div class="splash-content">
+      <div class="splash-glow"></div>
+      <div class="splash-logo">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <polygon points="28,4 52,16 52,40 28,52 4,40 4,16" fill="none" stroke="url(#g1)" stroke-width="2"/>
+          <polygon points="28,12 44,21 44,35 28,44 12,35 12,21" fill="url(#g2)" opacity="0.15"/>
+          <path d="M22 20 L32 20 L26 28 L34 28 L22 40 L26 30 L18 30 Z" fill="url(#g1)"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f5ff"/>
+              <stop offset="100%" stop-color="#0066ff"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00f5ff"/>
+              <stop offset="100%" stop-color="#0066ff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="splash-wordmark">Night<span>Exec</span></div>
+      </div>
+      <div class="splash-tag">MOBILE EXECUTOR v3.0</div>
+      <div class="splash-loader">
+        <div class="splash-track">
+          <div class="splash-bar" id="splashBar"></div>
+        </div>
+        <div class="splash-status" id="splashStatus">Carregando módulos...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       APP
+  ═══════════════════════════════════════ -->
+  <div id="app" class="hidden">
+
+    <!-- HEADER -->
+    <header class="header">
+      <button class="hdr-btn" id="menuBtn">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="hdr-brand">Night<span>Exec</span></div>
+      <div class="hdr-status">
+        <div class="status-pill" id="statusPill">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusTxt">Offline</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- TABS -->
+    <nav class="tab-nav">
+      <button class="tnav active" data-tab="editor">
+        <i>⚡</i><span>Editor</span>
+      </button>
+      <button class="tnav" data-tab="scripts">
+        <i>📜</i><span>Scripts</span>
+      </button>
+      <button class="tnav" data-tab="console">
+        <i>🖥</i><span>Console</span>
+        <div class="badge" id="consoleBadge" style="display:none">0</div>
+      </button>
+      <button class="tnav" data-tab="settings">
+        <i>⚙</i><span>Config</span>
+      </button>
+    </nav>
+
+    <!-- ─── TAB: EDITOR ─── -->
+    <section class="tab-panel active" id="panel-editor">
+      <div class="editor-topbar">
+        <div class="etb-left">
+          <button class="etb-btn" id="btnNewTab" title="Nova aba">＋</button>
+          <div class="tab-bar" id="tabBar">
+            <div class="etab active" data-idx="0">
+              <span class="etab-name">script_1.lua</span>
+              <button class="etab-close">×</button>
+            </div>
+          </div>
+        </div>
+        <div class="etb-right">
+          <button class="etb-btn" id="btnFormat" title="Formatar">✦</button>
+          <button class="etb-btn" id="btnOpen" title="Abrir arquivo">📂</button>
+          <button class="etb-btn" id="btnSaveScript" title="Salvar">💾</button>
+        </div>
+      </div>
+
+      <div class="editor-toolbar">
+        <button class="tb-btn" id="btnUndo">↩</button>
+        <button class="tb-btn" id="btnRedo">↪</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" id="btnCut">✂</button>
+        <button class="tb-btn" id="btnCopy">⎘</button>
+        <button class="tb-btn" id="btnPaste">📋</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" id="btnSelectAll">⬛</button>
+        <button class="tb-btn" id="btnClearEditor">🗑</button>
+        <div class="tb-sep"></div>
+        <!-- Snippets rápidos -->
+        <button class="tb-btn snippet" data-code="print()">print</button>
+        <button class="tb-btn snippet" data-code="local  = ">local</button>
+        <button class="tb-btn snippet" data-code="for i = 1,10 do&#10;  &#10;end">for</button>
+        <button class="tb-btn snippet" data-code="if  then&#10;  &#10;end">if</button>
+        <button class="tb-btn snippet" data-code="function ()&#10;  &#10;end">fn</button>
+        <button class="tb-btn snippet" data-code="task.spawn(function()&#10;  &#10;end)">spawn</button>
+        <button class="tb-btn snippet" data-code="task.wait()">wait</button>
+        <button class="tb-btn snippet" data-code="game:GetService()">getServ</button>
+      </div>
+
+      <div class="editor-body">
+        <div class="ln-wrap" id="lineNumbers">1</div>
+        <textarea id="codeEditor" class="code-area" spellcheck="false"
+          autocomplete="off" autocorrect="off" autocapitalize="off"
+          placeholder="-- NightExec v3.0&#10;-- Cole ou escreva seu script aqui&#10;print('Hello World!')"></textarea>
+      </div>
+
+      <div class="editor-footer">
+        <div class="ef-info">
+          <span id="cursorInfo">Ln 1, Col 1</span>
+          <span class="ef-sep">|</span>
+          <span id="charInfo">0 chars</span>
+          <span class="ef-sep">|</span>
+          <span class="ef-lang">Lua 5.1</span>
+        </div>
+        <div class="ef-actions">
+          <button class="btn-attach" id="btnAttach">🔗 Attach</button>
+          <button class="btn-exec" id="btnExec">⚡ Executar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: SCRIPTS ─── -->
+    <section class="tab-panel" id="panel-scripts">
+      <div class="sc-topbar">
+        <div class="sc-search">
+          <span class="sc-search-icon">🔍</span>
+          <input type="text" id="scSearch" placeholder="Buscar scripts..." class="sc-input" />
+          <button class="sc-clear" id="scClear">×</button>
+        </div>
+      </div>
+      <div class="sc-cats" id="scCats">
+        <button class="sc-cat active" data-cat="all">Todos</button>
+        <button class="sc-cat" data-cat="combat">⚔ Combate</button>
+        <button class="sc-cat" data-cat="farm">🌾 Farm</button>
+        <button class="sc-cat" data-cat="troll">😈 Troll</button>
+        <button class="sc-cat" data-cat="visual">👁 Visual</button>
+        <button class="sc-cat" data-cat="misc">🔧 Misc</button>
+        <button class="sc-cat" data-cat="saved">⭐ Salvos</button>
+      </div>
+      <div class="sc-list" id="scList"></div>
+    </section>
+
+    <!-- ─── TAB: CONSOLE ─── -->
+    <section class="tab-panel" id="panel-console">
+      <div class="con-topbar">
+        <div class="con-filters">
+          <label class="con-flt log"><input type="checkbox" id="fltLog" checked/> LOG</label>
+          <label class="con-flt warn"><input type="checkbox" id="fltWarn" checked/> WARN</label>
+          <label class="con-flt err"><input type="checkbox" id="fltErr" checked/> ERR</label>
+          <label class="con-flt sys"><input type="checkbox" id="fltSys" checked/> SYS</label>
+        </div>
+        <div class="con-actions">
+          <button class="tb-btn" id="btnClearCon">🗑</button>
+          <button class="tb-btn" id="btnCopyCon">⎘</button>
+        </div>
+      </div>
+      <div class="con-output" id="conOutput">
+        <div class="con-line sys"><span class="con-ts">00:00:00</span><span>NightExec v3.0 inicializado ✓</span></div>
+      </div>
+      <div class="con-inputbar">
+        <span class="con-prompt">›</span>
+        <input type="text" id="conInput" class="con-input" placeholder="Executar código rápido..." />
+        <button class="btn-run" id="btnConRun">▶</button>
+      </div>
+    </section>
+
+    <!-- ─── TAB: SETTINGS ─── -->
+    <section class="tab-panel" id="panel-settings">
+      <div class="set-list" id="setList"></div>
+    </section>
+
+  </div><!-- /app -->
+
+  <!-- SIDEBAR -->
+  <div class="sb-overlay hidden" id="sbOverlay"></div>
+  <aside class="sidebar hidden" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">
+        <span>⚡</span> NightExec
+      </div>
+      <button class="sb-close" id="sbClose">×</button>
+    </div>
+    <div class="sb-body">
+      <div class="sb-section-title">NAVEGAÇÃO</div>
+      <a class="sb-item" data-tab="editor">⚡ Editor</a>
+      <a class="sb-item" data-tab="scripts">📜 Scripts</a>
+      <a class="sb-item" data-tab="console">🖥 Console</a>
+      <a class="sb-item" data-tab="settings">⚙ Configurações</a>
+      <div class="sb-divider"></div>
+      <div class="sb-section-title">AÇÕES RÁPIDAS</div>
+      <a class="sb-item" id="sbAttach">🔗 Attach ao Jogo</a>
+      <a class="sb-item" id="sbClearAll">🗑 Limpar Tudo</a>
+      <a class="sb-item" id="sbExportLogs">📤 Exportar Logs</a>
+      <div class="sb-divider"></div>
+      <div class="sb-section-title">SOURCES</div>
+      <a class="sb-item" id="sbFetchSources">🌐 Buscar Sources</a>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-ver">NightExec v3.0 · Mobile</div>
+    </div>
+  </aside>
+
+  <!-- MODAL SOURCES -->
+  <div class="modal-overlay hidden" id="sourcesModal">
+    <div class="modal">
+      <div class="modal-head">
+        <span>🌐 Source Fetcher</span>
+        <button class="modal-close" id="sourcesClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="sf-row">
+          <input type="text" id="sfUrl" class="sf-input" placeholder="https://raw.githubusercontent.com/.../script.lua" />
+          <button class="sf-btn" id="sfFetch">Buscar</button>
+        </div>
+        <div class="sf-presets" id="sfPresets"></div>
+        <div class="sf-status" id="sfStatus"></div>
+        <div class="sf-preview" id="sfPreview"></div>
+        <div class="sf-actions hidden" id="sfActions">
+          <button class="sf-act-btn" id="sfLoad">📋 Carregar no Editor</button>
+          <button class="sf-act-btn exec" id="sfExec">⚡ Executar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- FILE INPUT OCULTO -->
+  <input type="file" id="fileInput" accept=".lua,.txt" style="display:none" />
+
+  <!-- SCRIPTS JS -->
+  <script src="js/db.js"></script>
+  <script src="js/sources.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/console.js"></script>
+  <script src="js/scripts.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/executor.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
